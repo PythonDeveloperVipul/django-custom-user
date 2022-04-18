@@ -1,16 +1,17 @@
 from django.core.mail import send_mail
 
 
-def send_mail_reset_password(default_from_email, email_plaintext_message, reset_password_token):
+def send_mail_reset_password(subject,
+                             message, from_email, to_email):
     send_mail(
 
-        "Reset your password",
+        subject,
 
-        email_plaintext_message,
+        message,
 
-        default_from_email,
+        from_email,
 
-        [reset_password_token.user.email],
+        [to_email],
 
         fail_silently=False
     )

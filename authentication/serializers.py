@@ -18,16 +18,18 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('first_name', 'last_name', 'email',
                   'password', 'confirm_password')
-        extra_kwargs = {
-            'first_name': {'required': True},
-            'last_name': {'required': True},
-        }
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['confirm_password']:
+        if attrs['first_name']=='':
+            raise serializers.ValidationError(
+                {"first_name": "first name not be blank"})
+        elif attrs['last_name']=='':
+            raise serializers.ValidationError(
+                {"last_name": "last name not be blank"})
+        elif attrs['password'] != attrs['confirm_password']:
             raise serializers.ValidationError(
                 {"password": "Password fields didn't match."})
-
+  
         return attrs
 
     def create(self, validated_data):
