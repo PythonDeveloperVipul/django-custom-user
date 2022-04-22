@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>{% block title %} User Add {% endblock title %}</title>
 </head>
 
 <body>
+    <h3>{% block heading %}User Add {% endblock heading %}</h3>
+    {% block contain %}
     <form method="post">
         {% csrf_token %}
-        <h3>{{ user_label }}</h3>
         <table>
             {{ form.as_table }}
         </table><br>
@@ -21,6 +22,7 @@
             <a href="{% url 'user_list_view' %}"> <input type="button" value="Home"></a>
         </div>
     </form>
+    {% endblock contain %}
 </body>
 
 </html>
