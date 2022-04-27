@@ -1,13 +1,13 @@
 from django.conf import settings
 from django.utils.crypto import get_random_string
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import User
 
 from .models import ResetPassword
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer,ChangePasswordSerializer
 from .utils import send_mail_reset_password
 
 
@@ -27,10 +27,13 @@ class Restpassword(APIView):
             try:
                 reset_password = ResetPassword(user=user, token=self.unique_id)
                 reset_password.save()
-                send_mail_reset_password(
-                    subject, reset_password.token, from_email, to_email)
             except:
                 reset_password = ResetPassword.objects.get(user=user)
+                reset_password.token=self.unique_id
+                reset_password.save()
+            send_mail_reset_password(
+                subject, reset_password.token, from_email, to_email)
+
             context = {'token': reset_password.token, 'email': user.email}
             return Response(context)
 
@@ -47,3 +50,36 @@ class Restpassword(APIView):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response({'msg': 'Invalid Token'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class ChangePasswordView(generics.UpdateAPIView):
+
+    serializer_class = ChangePasswordSerializer
+    model = User
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            if not self.object.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            response = {
+                'status': 'success',
+                'code': status.HTTP_200_OK,
+                'message': 'Password updated successfully',
+                'data': []
+            }
+
+            return Response(response)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
