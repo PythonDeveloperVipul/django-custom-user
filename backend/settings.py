@@ -37,6 +37,10 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(',')
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_volt.apps.AdminVoltConfig',
+    # "admin_interface",
+    # "colorfield",
+    # 'admin_panel',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,9 +50,11 @@ INSTALLED_APPS = [
     'drf_yasg',
     'users',
     'authentication',
+    'banking',
     'rest_framework',
     'rest_framework_simplejwt',
     'django_rest_passwordreset',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -66,7 +72,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ BASE_DIR / 'templates' ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,6 +135,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [ BASE_DIR / "static" ]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -155,7 +163,7 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=25),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,

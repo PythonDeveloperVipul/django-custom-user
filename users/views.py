@@ -25,10 +25,12 @@ class UserDeleteView(generic.DeleteView):
 class UserUpdateView(generic.UpdateView):
     model = User
     template_name = 'users/user_update.html'
-    fields = ['first_name', 'last_name', 'email']
+    fields = ['first_name','last_name','email']
     success_url = reverse_lazy('user_list_view')
 
  
+
+
 
 
 
